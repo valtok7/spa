@@ -1,0 +1,5 @@
+cd d:\code\spa
+pipenv --python 3.11
+pipenv install numpy scipy matplotlib
+code .
+
