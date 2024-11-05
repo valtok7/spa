@@ -8,3 +8,6 @@ build/
 
 # pipenv
 Pipfile.lock
+
+# test data
+*.csv
