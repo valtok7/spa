@@ -20,7 +20,7 @@ _ = gettext.gettext
 class MyFrame1 ( wx.Frame ):
 
     def __init__( self, parent ):
-        wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"spa"), pos = wx.DefaultPosition, size = wx.Size( 570,400 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+        wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"spa"), pos = wx.DefaultPosition, size = wx.Size( 708,400 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
         self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -82,11 +82,11 @@ class MyFrame1 ( wx.Frame ):
 
         bSizer11.Add( self.m_staticText9, 0, wx.ALL, 5 )
 
-        m_windowTypeChoices = [ _(u"Rectangular"), _(u"Hanning"), _(u"Hamming"), _(u"Blackman"), _(u"Blackman-Harris") ]
+        m_windowTypeChoices = [ _(u"Rectangular"), _(u"Hanning"), _(u"Hamming"), _(u"Blackman"), _(u"Blackman-Harris"), _(u"RBW 3dB") ]
         self.m_windowType = wx.ComboBox( self, wx.ID_ANY, _(u"Rectangular"), wx.DefaultPosition, wx.DefaultSize, m_windowTypeChoices, 0 )
         bSizer11.Add( self.m_windowType, 0, wx.ALL, 5 )
 
-        self.m_staticText10 = wx.StaticText( self, wx.ID_ANY, _(u"   "), wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText10 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_staticText10.Wrap( -1 )
 
         bSizer11.Add( self.m_staticText10, 0, wx.ALL, 5 )
@@ -99,6 +99,19 @@ class MyFrame1 ( wx.Frame ):
         m_windowCorrectionTypeChoices = [ _(u"No Correction"), _(u"Amplitude"), _(u"Power") ]
         self.m_windowCorrectionType = wx.ComboBox( self, wx.ID_ANY, _(u"Amplitude"), wx.DefaultPosition, wx.DefaultSize, m_windowCorrectionTypeChoices, 0 )
         bSizer11.Add( self.m_windowCorrectionType, 0, wx.ALL, 5 )
+
+        self.m_staticText13 = wx.StaticText( self, wx.ID_ANY, _(u"  "), wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText13.Wrap( -1 )
+
+        bSizer11.Add( self.m_staticText13, 0, wx.ALL, 5 )
+
+        self.m_staticText12 = wx.StaticText( self, wx.ID_ANY, _(u"RBW Bandwidth"), wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.m_staticText12.Wrap( -1 )
+
+        bSizer11.Add( self.m_staticText12, 0, wx.ALL, 5 )
+
+        self.m_rbwBandwidth = wx.TextCtrl( self, wx.ID_ANY, _(u"0.1"), wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer11.Add( self.m_rbwBandwidth, 0, wx.ALL, 5 )
 
 
         bSizer1.Add( bSizer11, 0, wx.EXPAND, 5 )
@@ -214,6 +227,8 @@ class MyFrame1 ( wx.Frame ):
 
         # Connect Events
         self.m_brouseInputFileName.Bind( wx.EVT_BUTTON, self.onButtonClickBrouseInputFileName )
+        self.m_windowType.Bind( wx.EVT_COMBOBOX, self.OnComboboxWindowType )
+        self.m_rbwBandwidth.Bind( wx.EVT_TEXT, self.OnTextRbwBandwidth )
         self.m_execute.Bind( wx.EVT_BUTTON, self.onButtonClickExecute )
 
     def __del__( self ):
@@ -222,6 +237,12 @@ class MyFrame1 ( wx.Frame ):
 
     # Virtual event handlers, override them in your derived class
     def onButtonClickBrouseInputFileName( self, event ):
+        event.Skip()
+
+    def OnComboboxWindowType( self, event ):
+        event.Skip()
+
+    def OnTextRbwBandwidth( self, event ):
         event.Skip()
 
     def onButtonClickExecute( self, event ):

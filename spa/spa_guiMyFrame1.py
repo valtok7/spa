@@ -13,6 +13,14 @@ class spa_guiMyFrame1( spa_gui.MyFrame1 ):
 		# TODO: Implement onButtonClickBrouseInputFileName
 		pass
 
+	def OnComboboxWindowType( self, event ):
+		# TODO: Implement OnComboboxWindowType
+		pass
+
+	def OnTextRbwBandwidth( self, event ):
+		# TODO: Implement OnTextRbwBandwidth
+		pass
+
 	def onButtonClickExecute( self, event ):
 		# TODO: Implement onButtonClickExecute
 		pass

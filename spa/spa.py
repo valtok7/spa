@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.fft as fft
 import matplotlib.pyplot as plt
+import math
 from enum import Enum, Flag, auto
 from typing import Tuple
 
@@ -11,9 +12,13 @@ class WindowType(Enum):
     HAMMING = auto()
     BLACKMAN = auto()
     BLACKMAN_HARRIS = auto()
+    RBW_3DB = auto()
 
 # 窓関数を作成する
-def create_window(window_type: WindowType, window_size: int) -> np.ndarray[np.float64]:
+def create_window(window_type: WindowType, window_size: int, fs:float=1.0, rbw_band_width: float=0.1) -> np.ndarray[np.float64]:
+    '''
+    fs and band_width are for RBW_3DB
+    '''
     match window_type:
         case WindowType.RECTANGULAR:
             return np.ones(window_size)
@@ -25,9 +30,15 @@ def create_window(window_type: WindowType, window_size: int) -> np.ndarray[np.fl
             return np.blackman(window_size)
         case WindowType.BLACKMAN_HARRIS:
             return np.blackman(window_size)
+        case WindowType.RBW_3DB:
+            return create_window_rbw_3db(window_size=window_size, fs=fs, band_width=rbw_band_width)
         case _:
             raise ValueError(f"Unknown window type: {window_type}")
-        
+
+def create_window_rbw_3db(window_size:int, fs:float, band_width:float) -> np.ndarray[np.float64]:
+    a = np.arange(-(window_size - 1)/2.0, (window_size - 1)/2.0 + 1)
+    return (1.0/(math.sqrt(2*math.pi*math.log(2.0))/(math.pi*band_width))) * np.exp(-a**2/(2.0*math.log(2.0)/((math.pi**2)*(band_width**2))))
+
 # 窓関数補正係数種別
 class WindowCorrectionType(Enum):
     NO_CORRECTION = auto()
@@ -47,6 +58,15 @@ def calc_window_correction_factor(correction_type:WindowCorrectionType, window: 
             return np.mean(window)
         case _:
             raise ValueError(f"Unknown correction type: {correction_type}")
+
+# RBW 3dBに必要な信号長を返す
+def require_size_for_rbw_3db(fs:float, band_width:float) -> int:
+    if band_width <= 0:
+        return 8
+    require_size:int = int(fs / band_width)
+    if require_size < 8:
+        require_size = 8   # 最低でも8サンプル使用する
+    return require_size
 
 # signalに対してfftを行い、結果をfourier_coefficientに格納する
 def calc_fourier_coefficient(signal: np.ndarray[np.complex128], fft_size: int, swap:bool=False, fs:float=1.0) -> Tuple[np.ndarray[np.complex128], np.ndarray[np.float64], np.ndarray[np.float64]]:
@@ -209,7 +229,7 @@ def save_complex_csv(file_name:str, data:np.ndarray[np.complex128]) -> None:
     np.savetxt(file_name, merged_data, delimiter=",")
 
 
-def spa(input_file_name:str, file_format:FileFormat, fft_size:int, fft_offset:int=0, fs:float=1.0, window_type:WindowType=WindowType.RECTANGULAR, window_correction_type:WindowCorrectionType=WindowCorrectionType.AMPLITUDE, spectrum_swap:bool=True, target_figure_displayed:int=all_traces(), target_file_stored:int=all_traces()) -> None:
+def spa(input_file_name:str, file_format:FileFormat, fft_size:int, fft_offset:int=0, fs:float=1.0, rbw_band_width:float=0.1, window_type:WindowType=WindowType.RECTANGULAR, window_correction_type:WindowCorrectionType=WindowCorrectionType.AMPLITUDE, spectrum_swap:bool=True, target_figure_displayed:int=all_traces(), target_file_stored:int=all_traces()) -> None:
     # ファイル読み込み
     if file_format == FileFormat.REAL_CSV:
         signal:np.ndarray[np.complex128] = read_real_csv(file_name=input_file_name, length=fft_size, offset=fft_offset)
@@ -223,7 +243,7 @@ def spa(input_file_name:str, file_format:FileFormat, fft_size:int, fft_offset:in
         if window_type == WindowType.RECTANGULAR:
             signal_windowed = signal
         else:
-            window = create_window(window_type=window_type, window_size=len(signal))
+            window = create_window(window_type=window_type, window_size=len(signal), fs=fs, rbw_band_width=rbw_band_width)
             window_correction_factor = calc_window_correction_factor(window_correction_type, window)
             signal_windowed:np.ndarray[np.complex128] = signal * window / window_correction_factor
 
