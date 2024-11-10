@@ -1,0 +1,17 @@
+{
+    "input_file": "",
+    "file_format": "Real CSV",
+    "fft_size": "32",
+    "window_type": "Rectangular",
+    "window_correction_type": "Amplitude",
+    "rbw_bandwidth": "0.1",
+    "sampling_rate": "1.0",
+    "power_spectrum_plot": true,
+    "power_spectrum_file": true,
+    "spectrum_swap": true,
+    "fourier_coefficient_plot": true,
+    "fourier_coefficient_file": true,
+    "power_vs_time_plot": true,
+    "power_vs_time_file": true,
+    "iq_vs_time_plot": true
+}

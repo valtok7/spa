@@ -1,251 +1,168 @@
-# -*- coding: utf-8 -*-
-
-###########################################################################
-## Python code generated with wxFormBuilder (version 4.2.1-0-g80c4cb6)
-## http://www.wxformbuilder.org/
-##
-## PLEASE DO *NOT* EDIT THIS FILE!
-###########################################################################
-
 import wx
-import wx.xrc
+import spa_core
+import json
+from spa_gui_builderMyFrame1 import spa_gui_builderMyFrame1
 
-import gettext
-_ = gettext.gettext
-
-###########################################################################
-## Class MyFrame1
-###########################################################################
-
-class MyFrame1 ( wx.Frame ):
-
+class gui( spa_gui_builderMyFrame1 ):
     def __init__( self, parent ):
-        wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = _(u"spa"), pos = wx.DefaultPosition, size = wx.Size( 708,400 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+        spa_gui_builderMyFrame1.__init__( self, parent )
+        self.spa = spa_core.SPA()
+        self.config_file = 'spa_config.json'
+        self.load_parameters()
+        self.UpdateComponents()
+        self.Bind(wx.EVT_CLOSE, self.on_close)
+
+    def load_parameters(self):
+        try:
+            with open(self.config_file, 'r') as f:
+                config = json.load(f)
+                self.m_inputFileName.Value = config.get('input_file', '')
+                self.m_fileFormat.SetValue(config.get('file_format', 'Real CSV'))
+                self.m_fftSize.SetValue(str(config.get('fft_size', '1024')))
+                self.m_windowType.SetValue(str(config.get('window_type', 'Rectangular')))
+                self.m_windowCorrectionType.SetValue(str(config.get('window_correction_type', 'Amplitude')))
+                self.m_rbwBandwidth.SetValue(str(config.get('rbw_bandwidth', '0.1')))
+                self.m_samplingRate.SetValue(str(config.get('sampling_rate', '1.0')))
+                self.m_powerSpectrumPlot.SetValue(bool(config.get('power_spectrum_plot', True)))
+                self.m_powerSpectrumFile.SetValue(bool(config.get('power_spectrum_file', True)))
+                self.m_spectrumSwap.SetValue(bool(config.get('spectrum_swap', True)))
+                self.m_fourierCoefficientPlot.SetValue(bool(config.get('fourier_coefficient_plot', True)))
+                self.m_fourierCoefficientFile.SetValue(bool(config.get('fourier_coefficient_file', True)))
+                self.m_powerVsTimePlot.SetValue(bool(config.get('power_vs_time_plot', True)))
+                self.m_powerVsTimeFile.SetValue(bool(config.get('power_vs_time_file', True)))
+                self.m_iqVsTimePlot.SetValue(bool(config.get('iq_vs_time_plot', True)))
+        except FileNotFoundError:
+            pass  # 初回起動時はファイルが存在しないため、デフォルト値を使用
+
+    def save_parameters(self):
+        config = {
+            'input_file': self.m_inputFileName.Value,
+            'file_format': self.m_fileFormat.GetValue(),
+            'fft_size': self.m_fftSize.GetValue(),
+            'window_type': self.m_windowType.GetValue(),
+            'window_correction_type': self.m_windowCorrectionType.GetValue(),
+            'rbw_bandwidth': self.m_rbwBandwidth.GetValue(),
+            'sampling_rate': self.m_samplingRate.GetValue(),
+            'power_spectrum_plot': self.m_powerSpectrumPlot.GetValue(),
+            'power_spectrum_file': self.m_powerSpectrumFile.GetValue(),
+            'spectrum_swap': self.m_spectrumSwap.GetValue(),
+            'fourier_coefficient_plot': self.m_fourierCoefficientPlot.GetValue(),
+            'fourier_coefficient_file': self.m_fourierCoefficientFile.GetValue(),
+            'power_vs_time_plot': self.m_powerVsTimePlot.GetValue(),
+            'power_vs_time_file': self.m_powerVsTimeFile.GetValue(),
+            'iq_vs_time_plot': self.m_iqVsTimePlot.GetValue(),
+        }
+        with open(self.config_file, 'w') as f:
+            json.dump(config, f, indent=4)
+    
+    def on_close(self, event):
+        self.save_parameters()
+        event.Skip()  # イベントを伝播させて、ウィンドウを実際に閉じる
 
-        self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
-
-        bSizer1 = wx.BoxSizer( wx.VERTICAL )
-
-        bSizer2 = wx.BoxSizer( wx.HORIZONTAL )
-
-        self.m_staticText2 = wx.StaticText( self, wx.ID_ANY, _(u"Input File"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText2.Wrap( -1 )
-
-        self.m_staticText2.SetMinSize( wx.Size( 100,-1 ) )
-
-        bSizer2.Add( self.m_staticText2, 0, wx.ALL, 5 )
-
-        self.m_inputFileName = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer2.Add( self.m_inputFileName, 1, wx.ALL, 5 )
-
-        self.m_brouseInputFileName = wx.Button( self, wx.ID_ANY, _(u"Brouse"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer2.Add( self.m_brouseInputFileName, 0, wx.ALL, 5 )
-
-
-        bSizer1.Add( bSizer2, 0, wx.EXPAND, 5 )
-
-        bSizer3 = wx.BoxSizer( wx.HORIZONTAL )
-
-        self.m_fileType = wx.StaticText( self, wx.ID_ANY, _(u"File Format"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_fileType.Wrap( -1 )
-
-        self.m_fileType.SetMinSize( wx.Size( 100,-1 ) )
-
-        bSizer3.Add( self.m_fileType, 0, wx.ALL, 5 )
-
-        m_fileFormatChoices = [ _(u"Real CSV"), _(u"Complex CSV") ]
-        self.m_fileFormat = wx.ComboBox( self, wx.ID_ANY, _(u"Real CSV"), wx.DefaultPosition, wx.DefaultSize, m_fileFormatChoices, 0 )
-        bSizer3.Add( self.m_fileFormat, 0, wx.ALL, 5 )
-
-
-        bSizer1.Add( bSizer3, 0, wx.EXPAND, 5 )
-
-        bSizer6 = wx.BoxSizer( wx.HORIZONTAL )
-
-        self.m_staticText3 = wx.StaticText( self, wx.ID_ANY, _(u"FFT Size"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText3.Wrap( -1 )
-
-        self.m_staticText3.SetMinSize( wx.Size( 100,-1 ) )
-
-        bSizer6.Add( self.m_staticText3, 0, wx.ALL, 5 )
-
-        self.m_fftSize = wx.TextCtrl( self, wx.ID_ANY, _(u"32"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer6.Add( self.m_fftSize, 0, wx.ALL, 5 )
-
-
-        bSizer1.Add( bSizer6, 0, wx.EXPAND, 5 )
-
-        bSizer11 = wx.BoxSizer( wx.HORIZONTAL )
-
-        self.m_staticText9 = wx.StaticText( self, wx.ID_ANY, _(u"Window"), wx.DefaultPosition, wx.Size( 100,-1 ), 0 )
-        self.m_staticText9.Wrap( -1 )
-
-        bSizer11.Add( self.m_staticText9, 0, wx.ALL, 5 )
-
-        m_windowTypeChoices = [ _(u"Rectangular"), _(u"Hanning"), _(u"Hamming"), _(u"Blackman"), _(u"Blackman-Harris"), _(u"RBW 3dB") ]
-        self.m_windowType = wx.ComboBox( self, wx.ID_ANY, _(u"Rectangular"), wx.DefaultPosition, wx.DefaultSize, m_windowTypeChoices, 0 )
-        bSizer11.Add( self.m_windowType, 0, wx.ALL, 5 )
-
-        self.m_staticText10 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText10.Wrap( -1 )
-
-        bSizer11.Add( self.m_staticText10, 0, wx.ALL, 5 )
-
-        self.m_staticText11 = wx.StaticText( self, wx.ID_ANY, _(u"Window Correction Type"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText11.Wrap( -1 )
-
-        bSizer11.Add( self.m_staticText11, 0, wx.ALL, 5 )
-
-        m_windowCorrectionTypeChoices = [ _(u"No Correction"), _(u"Amplitude"), _(u"Power") ]
-        self.m_windowCorrectionType = wx.ComboBox( self, wx.ID_ANY, _(u"Amplitude"), wx.DefaultPosition, wx.DefaultSize, m_windowCorrectionTypeChoices, 0 )
-        bSizer11.Add( self.m_windowCorrectionType, 0, wx.ALL, 5 )
-
-        self.m_staticText13 = wx.StaticText( self, wx.ID_ANY, _(u"  "), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText13.Wrap( -1 )
-
-        bSizer11.Add( self.m_staticText13, 0, wx.ALL, 5 )
-
-        self.m_staticText12 = wx.StaticText( self, wx.ID_ANY, _(u"RBW Bandwidth"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText12.Wrap( -1 )
-
-        bSizer11.Add( self.m_staticText12, 0, wx.ALL, 5 )
-
-        self.m_rbwBandwidth = wx.TextCtrl( self, wx.ID_ANY, _(u"0.1"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer11.Add( self.m_rbwBandwidth, 0, wx.ALL, 5 )
-
-
-        bSizer1.Add( bSizer11, 0, wx.EXPAND, 5 )
-
-        bSizer7 = wx.BoxSizer( wx.HORIZONTAL )
-
-        self.m_staticText4 = wx.StaticText( self, wx.ID_ANY, _(u"Sampling Rate"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText4.Wrap( -1 )
-
-        self.m_staticText4.SetMinSize( wx.Size( 100,-1 ) )
-
-        bSizer7.Add( self.m_staticText4, 0, wx.ALL, 5 )
-
-        self.m_samplingRate = wx.TextCtrl( self, wx.ID_ANY, _(u"1.0"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer7.Add( self.m_samplingRate, 0, wx.ALL, 5 )
-
-
-        bSizer1.Add( bSizer7, 0, wx.EXPAND, 5 )
-
-        bSizer71 = wx.BoxSizer( wx.HORIZONTAL )
-
-        self.m_staticText5 = wx.StaticText( self, wx.ID_ANY, _(u"Power Spectrum (dB)"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText5.Wrap( -1 )
-
-        self.m_staticText5.SetMinSize( wx.Size( 150,-1 ) )
-
-        bSizer71.Add( self.m_staticText5, 0, wx.ALL, 5 )
-
-        self.m_powerSpectrumPlot = wx.CheckBox( self, wx.ID_ANY, _(u"Plot"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_powerSpectrumPlot.SetValue(True)
-        bSizer71.Add( self.m_powerSpectrumPlot, 0, wx.ALL, 5 )
-
-        self.m_powerSpectrumFile = wx.CheckBox( self, wx.ID_ANY, _(u"File"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_powerSpectrumFile.SetValue(True)
-        bSizer71.Add( self.m_powerSpectrumFile, 0, wx.ALL, 5 )
-
-        self.m_spectrumSwap = wx.CheckBox( self, wx.ID_ANY, _(u"Spectrum Swap"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_spectrumSwap.SetValue(True)
-        bSizer71.Add( self.m_spectrumSwap, 0, wx.ALL, 5 )
-
-
-        bSizer1.Add( bSizer71, 0, wx.EXPAND, 5 )
-
-        bSizer8 = wx.BoxSizer( wx.HORIZONTAL )
-
-        self.m_staticText6 = wx.StaticText( self, wx.ID_ANY, _(u"Fourier Coefficient"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText6.Wrap( -1 )
-
-        self.m_staticText6.SetMinSize( wx.Size( 150,-1 ) )
-
-        bSizer8.Add( self.m_staticText6, 0, wx.ALL, 5 )
-
-        self.m_fourierCoefficientPlot = wx.CheckBox( self, wx.ID_ANY, _(u"Plot"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_fourierCoefficientPlot.SetValue(True)
-        bSizer8.Add( self.m_fourierCoefficientPlot, 0, wx.ALL, 5 )
-
-        self.m_fourierCoefficientFile = wx.CheckBox( self, wx.ID_ANY, _(u"File"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_fourierCoefficientFile.SetValue(True)
-        bSizer8.Add( self.m_fourierCoefficientFile, 0, wx.ALL, 5 )
-
-
-        bSizer1.Add( bSizer8, 0, wx.EXPAND, 5 )
-
-        bSizer9 = wx.BoxSizer( wx.HORIZONTAL )
-
-        self.m_staticText7 = wx.StaticText( self, wx.ID_ANY, _(u"Power vs Time (dB)"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText7.Wrap( -1 )
-
-        self.m_staticText7.SetMinSize( wx.Size( 150,-1 ) )
-
-        bSizer9.Add( self.m_staticText7, 0, wx.ALL, 5 )
-
-        self.m_powerVsTimePlot = wx.CheckBox( self, wx.ID_ANY, _(u"Plot"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_powerVsTimePlot.SetValue(True)
-        bSizer9.Add( self.m_powerVsTimePlot, 0, wx.ALL, 5 )
-
-        self.m_powerVsTimeFile = wx.CheckBox( self, wx.ID_ANY, _(u"File"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_powerVsTimeFile.SetValue(True)
-        bSizer9.Add( self.m_powerVsTimeFile, 0, wx.ALL, 5 )
-
-
-        bSizer1.Add( bSizer9, 0, wx.EXPAND, 5 )
-
-        bSizer10 = wx.BoxSizer( wx.HORIZONTAL )
-
-        self.m_staticText8 = wx.StaticText( self, wx.ID_ANY, _(u"IQ vs Time"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText8.Wrap( -1 )
-
-        self.m_staticText8.SetMinSize( wx.Size( 150,-1 ) )
-
-        bSizer10.Add( self.m_staticText8, 0, wx.ALL, 5 )
-
-        self.m_iqVsTimePlot = wx.CheckBox( self, wx.ID_ANY, _(u"Plot"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_iqVsTimePlot.SetValue(True)
-        bSizer10.Add( self.m_iqVsTimePlot, 0, wx.ALL, 5 )
-
-
-        bSizer1.Add( bSizer10, 0, wx.EXPAND, 5 )
-
-        bSizer4 = wx.BoxSizer( wx.VERTICAL )
-
-        self.m_execute = wx.Button( self, wx.ID_ANY, _(u"execute"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer4.Add( self.m_execute, 0, wx.ALL, 5 )
-
-
-        bSizer1.Add( bSizer4, 1, wx.EXPAND, 5 )
-
-
-        self.SetSizer( bSizer1 )
-        self.Layout()
-
-        self.Centre( wx.BOTH )
-
-        # Connect Events
-        self.m_brouseInputFileName.Bind( wx.EVT_BUTTON, self.onButtonClickBrouseInputFileName )
-        self.m_windowType.Bind( wx.EVT_COMBOBOX, self.OnComboboxWindowType )
-        self.m_rbwBandwidth.Bind( wx.EVT_TEXT, self.OnTextRbwBandwidth )
-        self.m_execute.Bind( wx.EVT_BUTTON, self.onButtonClickExecute )
-
-    def __del__( self ):
-        pass
-
-
-    # Virtual event handlers, override them in your derived class
     def onButtonClickBrouseInputFileName( self, event ):
-        event.Skip()
+        dialog = wx.FileDialog(None, "Select input file", style=wx.FD_OPEN)        
+        if dialog.ShowModal() == wx.ID_OK:
+            self.m_inputFileName.Value = dialog.GetPath()
 
     def OnComboboxWindowType( self, event ):
-        event.Skip()
+        # 他のコンポーネントへの影響を反映
+        self.UpdateComponents()
 
     def OnTextRbwBandwidth( self, event ):
-        event.Skip()
-
+        # 他のコンポーネントへの影響を反映
+        self.UpdateComponents()
+    
+    def UpdateComponents(self):
+        # Update FFT size, RBW Bandwidth
+        match self.m_windowType.GetValue():
+            case "RBW 3dB":
+                self.m_fftSize.Enable(False)
+                require_size:int = spa_core.require_size_for_rbw_3db(float(self.m_samplingRate.GetValue()), float(self.m_rbwBandwidth.GetValue()))
+                self.m_fftSize.SetValue(str(require_size))
+                self.m_rbwBandwidth.Enable(True)
+            case _:
+                self.m_fftSize.Enable(True)
+                self.m_rbwBandwidth.Enable(False)
+        
     def onButtonClickExecute( self, event ):
-        event.Skip()
+        # 範囲内に丸める
+        if int(self.m_fftSize.GetValue()) <= 0:
+            self.m_fftSize.SetValue("8")
+        if float(self.m_samplingRate.GetValue()) <= 0.0:
+            self.m_samplingRate.SetValue("1.0")
+        if float(self.m_rbwBandwidth.GetValue()) <= 0.0:
+            self.m_rbwBandwidth.SetValue("0.1")
 
+        # 他のコンポーネントへの影響を反映
+        self.UpdateComponents()
 
+        # File Format取得
+        file_format:spa_core.FileFormat = spa_core.FileFormat.REAL_CSV
+        match self.m_fileFormat.GetValue():
+            case "Real CSV":
+                file_format = spa_core.FileFormat.REAL_CSV
+            case "Complex CSV":
+                file_format = spa_core.FileFormat.COMPLEX_CSV
+            case "Real BIN":
+                file_format = spa_core.FileFormat.REAL_BIN
+            case "Complex BIN":
+                file_format = spa_core.FileFormat.COMPLEX_BIN
+            case _:
+                raise ValueError(f"Unknown file format: {self.m_fileFormat.GetValue()}")
+        
+        # FFT Size取得
+        fft_size = int(self.m_fftSize.GetValue())
+
+        # Window Type取得    
+        match self.m_windowType.GetValue():
+            case "Rectangular":
+                window_type = spa_core.WindowType.RECTANGULAR
+            case "Blackman-Harris":
+                window_type = spa_core.WindowType.BLACKMAN_HARRIS
+            case "Hanning":
+                window_type = spa_core.WindowType.HANNING
+            case "Hamming":
+                window_type = spa_core.WindowType.HAMMING
+            case "Blackman":
+                window_type = spa_core.WindowType.BLACKMAN
+            case "RBW 3dB":
+                window_type = spa_core.WindowType.RBW_3DB
+            case _:
+                raise ValueError(f"Unknown correction type: {self.m_windowType.GetValue()}")
+            
+        # Window Correction Type取得
+        window_correction_type:spa_core.WindowCorrectionType = spa_core.WindowCorrectionType.NO_CORRECTION
+        if self.m_windowCorrectionType.GetValue() == "Amplitude":
+            window_correction_type = spa_core.WindowCorrectionType.AMPLITUDE
+        elif self.m_windowCorrectionType.GetValue() == "Power":
+            window_correction_type = spa_core.WindowCorrectionType.POWER
+
+        # RBW bandwidth取得
+        rbw_band_width = float(self.m_rbwBandwidth.GetValue())
+
+        # Sampling Rate取得
+        fs = float(self.m_samplingRate.GetValue())
+
+        # Target Figure Dispalyed取得
+        target_figure_displayed:spa_core.Traces = spa_core.Traces.NONE
+        if self.m_powerSpectrumPlot.GetValue() == True:
+            target_figure_displayed = target_figure_displayed | spa_core.Traces.SPECTRUM_DB
+        if self.m_fourierCoefficientPlot.GetValue() == True:
+            target_figure_displayed = target_figure_displayed | spa_core.Traces.FOURIER_COEFFICIENT
+        if self.m_powerVsTimePlot.GetValue() == True:
+            target_figure_displayed = target_figure_displayed | spa_core.Traces.POWER_VS_TIME_DB
+        if self.m_iqVsTimePlot.GetValue() == True:
+            target_figure_displayed = target_figure_displayed | spa_core.Traces.AMPLITUDE_VS_TIME
+        
+        # Target File Stored取得
+        target_file_stored:spa_core.Traces = spa_core.Traces.NONE
+        if self.m_powerSpectrumFile.GetValue() == True:
+            target_file_stored = target_file_stored | spa_core.Traces.SPECTRUM_DB
+        if self.m_fourierCoefficientFile.GetValue() == True:
+            target_file_stored = target_file_stored | spa_core.Traces.FOURIER_COEFFICIENT
+        if self.m_powerVsTimeFile.GetValue() == True:
+            target_file_stored = target_file_stored | spa_core.Traces.POWER_VS_TIME_DB
+
+        # 解析実行
+        self.spa.analyze(input_file_name=self.m_inputFileName.GetValue(), file_format=file_format, fft_size=fft_size, fs=fs, window_type=window_type, window_correction_type=window_correction_type, rbw_band_width=rbw_band_width, spectrum_swap=self.m_spectrumSwap.GetValue(), target_figure_displayed=target_figure_displayed, target_file_stored=target_file_stored)
+ 

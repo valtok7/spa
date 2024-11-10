@@ -6,18 +6,30 @@
     "configurations": [
         {
             "name": "Python: 現在のファイル",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true
         },        
         {
-            "name": "Python: spa",
-            "type": "python",
+            "name": "Python: spa cui",
+            "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/spa/__main__.py",
+            "program": "spa",
+            "args": ["m", "--cui"],
             "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "justMyCode": true
+        },        
+        {
+            "name": "Python: spa gui",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "spa",
+            "args": ["m"],
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
             "justMyCode": true
         }
     ]

@@ -1,0 +1,17 @@
+{
+    "input_file": "D:\\Code\\spa\\testdata.bin",
+    "file_format": "Complex BIN",
+    "fft_size": "1024",
+    "window_type": "Blackman-Harris",
+    "window_correction_type": "Amplitude",
+    "rbw_bandwidth": "0.1",
+    "sampling_rate": "1.0",
+    "power_spectrum_plot": true,
+    "power_spectrum_file": false,
+    "spectrum_swap": true,
+    "fourier_coefficient_plot": false,
+    "fourier_coefficient_file": false,
+    "power_vs_time_plot": false,
+    "power_vs_time_file": false,
+    "iq_vs_time_plot": false
+}
